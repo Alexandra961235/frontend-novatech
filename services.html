@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NovaTech | Servicios</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="#">NovaTech</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link active" href="services.html">Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="login.html">Admin</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido -->
+  <main class="container py-5">
+    <h2 class="text-center mb-4">Nuestros Servicios</h2>
+
+    <!-- Buscador -->
+    <div class="row mb-4">
+      <div class="col-md-6 offset-md-3">
+        <input type="text" id="buscador" class="form-control" placeholder="Buscar servicio...">
+      </div>
+    </div>
+
+    <!-- Contenedor de tarjetas -->
+    <div class="row" id="contenedor-servicios"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-primary text-white text-center py-4 mt-5">
+    <p class="mb-0">© 2025 NovaTech. Bogotá, Colombia</p>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Seed de datos (debe estar antes que el JS principal) -->
+  <script src="assets/js/data.js"></script>
+
+  <!-- Script principal -->
+  <script>
+    function getServicios() {
+      try {
+        return JSON.parse(localStorage.getItem("servicios")) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    const contenedor = document.getElementById("contenedor-servicios");
+    const buscador = document.getElementById("buscador");
+
+    function mostrarServicios(lista) {
+      contenedor.innerHTML = "";
+      if (lista.length === 0) {
+        contenedor.innerHTML = '<div class="col-12 text-center"><p>No se encontraron resultados.</p></div>';
+        return;
+      }
+
+      lista.forEach(servicio => {
+        contenedor.innerHTML += `
+          <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+              <img src="${servicio.imagen}" class="card-img-top img-fluid" alt="${servicio.nombre}">
+              <div class="card-body">
+                <h5 class="card-title">${servicio.nombre}</h5>
+                <p class="card-text fw-bold">$${Number(servicio.precio).toLocaleString('es-CO')}</p>
+                ${servicio.promo ? '<span class="badge bg-success mb-2">En promoción</span><br>' : ''}
+                <a href="service-detail.html?id=${servicio.id}" class="btn btn-outline-primary mt-2">Ver detalle</a>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Inicial
+    let data = getServicios();
+    mostrarServicios(data);
+
+    // Filtro
+    buscador.addEventListener("input", () => {
+      const t = buscador.value.toLowerCase();
+      const filtrados = data.filter(s => s.nombre.toLowerCase().includes(t));
+      mostrarServicios(filtrados);
+    });
+
+    // Sincronizar con cambios en admin
+    window.addEventListener("storage", (e) => {
+      if (e.key === "servicios") {
+        data = getServicios();
+        mostrarServicios(data);
+      }
+    });
+  </script>
+</body>
+</html>

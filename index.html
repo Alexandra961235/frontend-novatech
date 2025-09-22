@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NovaTech | Soluciones digitales</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .hero {
+      background-image: url('assets/img/bg-hero.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+      height: 100vh;
+      margin-top: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 800px;
+      padding: 0 20px;
+    }
+    .hero-content h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+    .hero-content p {
+      font-size: 1.1rem;
+      color: #ddd;
+    }
+    .hero-content .btn-primary {
+      margin-top: 30px;
+      font-size: 1.1rem;
+      padding: 12px 30px;
+      background-color: #fbbc05;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    .hero-content .btn-primary:hover {
+      background-color: #ffa000;
+      color: white;
+    }
+    footer {
+      background-color: #1E88E5;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .navbar-brand img {
+      height: 40px;
+      margin-right: 10px;
+    }
+    nav.navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="assets/img/logo.png" alt="NovaTech Logo">
+        <strong>NovaTech</strong>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link active" href="#">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="services.html">Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="login.html">Admin</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-content">
+      <h2 class="text-white-50">Novatech</h2>
+      <h1>Desarrollo de Software en Colombia</h1>
+      <p>
+        Somos especialistas en <strong>soluciones digitales</strong> para empresas de Bogotá, Medellín y todo el país.
+        Automatizamos procesos, integramos IA y diseñamos plataformas web, móviles y escalables.
+      </p>
+      <a href="services.html" class="btn btn-primary">Explora nuestros servicios</a>
+    </div>
+  </header>
+
+  <!-- FORMULARIO DE CONTACTO -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-4">Solicita una Consultoría</h2>
+      <form id="formContacto" class="row g-3 mx-auto" style="max-width: 700px;">
+        <div class="col-md-6">
+          <label for="nombre" class="form-label">Nombre</label>
+          <input type="text" class="form-control" id="nombre" required>
+        </div>
+        <div class="col-md-6">
+          <label for="correo" class="form-label">Correo electrónico</label>
+          <input type="email" class="form-control" id="correo" required>
+        </div>
+        <div class="col-12">
+          <label for="mensaje" class="form-label">Mensaje</label>
+          <textarea class="form-control" id="mensaje" rows="4" required></textarea>
+        </div>
+        <div class="col-12 text-center">
+          <button type="submit" class="btn btn-primary px-5">Enviar solicitud</button>
+        </div>
+        <div id="alerta" class="alert alert-success mt-3 d-none" role="alert">
+          ¡Tu solicitud fue enviada con éxito!
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="mb-0">© 2025 NovaTech. Bogotá, Colombia</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById("formContacto").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const nombre = document.getElementById("nombre").value;
+      const correo = document.getElementById("correo").value;
+      const mensaje = document.getElementById("mensaje").value;
+
+      const consulta = { nombre, correo, mensaje, fecha: new Date().toLocaleString() };
+      const existentes = JSON.parse(localStorage.getItem("consultas") || "[]");
+      existentes.push(consulta);
+      localStorage.setItem("consultas", JSON.stringify(existentes));
+
+      document.getElementById("formContacto").reset();
+      document.getElementById("alerta").classList.remove("d-none");
+
+      setTimeout(() => {
+        document.getElementById("alerta").classList.add("d-none");
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
