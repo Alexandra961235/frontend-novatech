@@ -7,8 +7,6 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
-
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
       <a class="navbar-brand" href="#">NovaTech</a>
@@ -25,14 +23,26 @@
     </div>
   </nav>
 
-  <!-- Contenido -->
   <main class="container py-5">
     <h2 class="text-center mb-4">Nuestros Servicios</h2>
 
-    <!-- Buscador -->
+    <!-- Buscador, filtro y orden -->
     <div class="row mb-4">
-      <div class="col-md-6 offset-md-3">
+      <div class="col-md-4">
         <input type="text" id="buscador" class="form-control" placeholder="Buscar servicio...">
+      </div>
+      <div class="col-md-4">
+        <select id="ordenPrecio" class="form-select">
+          <option value="">Ordenar por precio</option>
+          <option value="asc">Menor a mayor</option>
+          <option value="desc">Mayor a menor</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <div class="form-check mt-2">
+          <input class="form-check-input" type="checkbox" id="filtroPromo">
+          <label class="form-check-label" for="filtroPromo">Solo en promoción</label>
+        </div>
       </div>
     </div>
 
@@ -40,18 +50,13 @@
     <div class="row" id="contenedor-servicios"></div>
   </main>
 
-  <!-- Footer -->
   <footer class="bg-primary text-white text-center py-4 mt-5">
     <p class="mb-0">© 2025 NovaTech. Bogotá, Colombia</p>
   </footer>
 
-  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Seed de datos (debe estar antes que el JS principal) -->
   <script src="assets/js/data.js"></script>
 
-  <!-- Script principal -->
   <script>
     function getServicios() {
       try {
@@ -63,6 +68,10 @@
 
     const contenedor = document.getElementById("contenedor-servicios");
     const buscador = document.getElementById("buscador");
+    const ordenPrecio = document.getElementById("ordenPrecio");
+    const filtroPromo = document.getElementById("filtroPromo");
+
+    let data = getServicios();
 
     function mostrarServicios(lista) {
       contenedor.innerHTML = "";
@@ -88,24 +97,35 @@
       });
     }
 
-    // Inicial
-    let data = getServicios();
-    mostrarServicios(data);
+    function aplicarFiltros() {
+      let resultado = [...data];
+      const texto = buscador.value.toLowerCase();
+      if (texto) {
+        resultado = resultado.filter(s => s.nombre.toLowerCase().includes(texto));
+      }
+      if (filtroPromo.checked) {
+        resultado = resultado.filter(s => s.promo === true || s.promo === "true");
+      }
+      if (ordenPrecio.value === "asc") {
+        resultado.sort((a, b) => a.precio - b.precio);
+      } else if (ordenPrecio.value === "desc") {
+        resultado.sort((a, b) => b.precio - a.precio);
+      }
+      mostrarServicios(resultado);
+    }
 
-    // Filtro
-    buscador.addEventListener("input", () => {
-      const t = buscador.value.toLowerCase();
-      const filtrados = data.filter(s => s.nombre.toLowerCase().includes(t));
-      mostrarServicios(filtrados);
-    });
+    buscador.addEventListener("input", aplicarFiltros);
+    ordenPrecio.addEventListener("change", aplicarFiltros);
+    filtroPromo.addEventListener("change", aplicarFiltros);
 
-    // Sincronizar con cambios en admin
     window.addEventListener("storage", (e) => {
       if (e.key === "servicios") {
         data = getServicios();
-        mostrarServicios(data);
+        aplicarFiltros();
       }
     });
+
+    aplicarFiltros();
   </script>
 </body>
 </html>
